@@ -1,39 +1,30 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var expect = require('expect');
-var $ = require('jQuery');
+var {Provider} = require('react-redux');
 var TestUtils = require('react-addons-test-utils');
+var expect = require('expect');
+var $ = require('jquery');
 
+var configureStore = require('configureStore');
 var TodoApp = require('TodoApp');
+import TodoList from 'TodoList';
 
 describe('TodoApp', () => {
+  it('should exist', () => {
+    expect(TodoApp).toExist();
+  });
 
-    it('should exist', () => {
-        expect(TodoApp).toExist();
-    });
+  it('should render TodoList', () => {
+    var store = configureStore.configure();
+    var provider = TestUtils.renderIntoDocument(
+      <Provider store={store}>
+        <TodoApp/>
+      </Provider>
+    );
 
-    it('should add todo to the todos state on handleAddTodo', () => {
-        var todoText = 'test';
-        var todoApp = TestUtils.renderIntoDocument(<TodoApp />);
+    var todoApp = TestUtils.scryRenderedComponentsWithType(provider, TodoApp)[0]
+    var todoList = TestUtils.scryRenderedComponentsWithType(todoApp, TodoList);
 
-        todoApp.setState({todos: []});
-        todoApp.handleAddTodo(todoText);
-
-        expect(todoApp.state.todos[0].text).toBe(todoText);
-    });
-
-    it('should toggle completed value when handleToggle is called', () => {
-        var todoData = {
-            id: 1,
-            text: "Test",
-            completed: false
-        };
-        var todoApp = TestUtils.renderIntoDocument(<TodoApp/>)
-        todoApp.setState({todos: [todoData]});
-
-        expect(todoApp.state.todos[0].completed).toBe(false);
-        todoApp.handleToggle(1);
-        expect(todoApp.state.todos[0].completed).toBe(true);
-        expect()
-    });
+    expect(todoList.length).toEqual(1);
+  });
 });
